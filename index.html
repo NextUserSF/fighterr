@@ -1,0 +1,3290 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>FightErr.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>FightErr.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="comment">/*jshint node: true*/</span>
+<span class="comment">/*global F, FightErr, console, DEBUG, printStackTrace*/</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>FightErr offers a bunch of functions to help validate arguments of your functions.</p>
+<p>It contains three kind of functions:</p>
+<ul>
+<li><a href="#validation">Validation functions</a>: test type and throw an error if it’s not the one required</li>
+<li><a href="#test">Test functions</a>: just test type of a variable value and return a boolean</li>
+<li><a href="#utils">Utilities functions</a></li>
+</ul>
+<p>You can use either <code>F</code> or <code>FightErr</code> keywords to access functions.</p>
+<p>Example:</p>
+<pre><code> <span class="keyword">var</span> myFunction = <span class="function"><span class="keyword">function</span> <span class="params">(strArg, numArg)</span> {</span>
+   <span class="comment">// Check arguments</span>
+   <span class="comment">// Note that we give the function name so</span>
+   <span class="comment">// the error message is relevant</span>
+   F.str(<span class="string">'strArg'</span>, strArg, <span class="string">'myFunction'</span>);
+   F.num(<span class="string">'numArg'</span>, numArg, <span class="string">'myFunction'</span>);
+
+   <span class="comment">// Arguments are valid</span>
+   console.log(strArg + <span class="string">" magic number is "</span>
+     + F.toStr(numArg));
+ }
+
+ myFunction ( <span class="string">"Don't panic"</span>, <span class="number">42</span> ) ;
+ <span class="comment">// No error</span>
+
+ myFunction ( <span class="string">"Don't panic"</span>, {} ) ;
+ <span class="comment">// Error thrown: second argument is not a number</span>
+
+ myFunction ( [<span class="string">"Don't panic"</span>], <span class="number">42</span> ) ;
+ <span class="comment">// Error thrown: first argument is not a string</span></code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="keyword">if</span> (<span class="string">'undefined'</span> === <span class="keyword">typeof</span> F) {
+    <span class="comment">/*jshint -W020 */</span>
+    F = FightErr = <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+        <span class="string">"use strict"</span>;
+
+        F.log.apply(F, F.argToArr(arguments));
+    };
+    <span class="comment">/*jshint +W020*/</span>
+
+    <span class="keyword">if</span> (<span class="string">'undefined'</span> !== <span class="keyword">typeof</span> window) {
+        window.F = window.FightErr = FightErr;
+    }
+
+    <span class="keyword">if</span> (<span class="string">'undefined'</span> !== <span class="keyword">typeof</span> module &amp;&amp; <span class="string">'undefined'</span> !== <span class="keyword">typeof</span> module.exports) {
+        module.exports = FightErr;
+    }
+}
+
+(<span class="function"><span class="keyword">function</span> <span class="params">(F)</span> {</span>
+
+    <span class="string">"use strict"</span>;
+
+    <span class="keyword">var</span> fnType = <span class="keyword">typeof</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>},
+        obj = {},
+        chrome = !!window.chrome,
+        has_console = !!console;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p><a name="validation"></a></p>
+<h1 id="validation-functions">Validation functions</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="fn">fn</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Validate a <code>Function</code> argument</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.fn = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!F.isFn(v)) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'function'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="arr">arr</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Validate an <code>Array</code> argument</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.arr = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!F.isArr(v)) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'Array'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h2 id="str">str</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Validate a <code>String</code> argument</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.str = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!F.isStr(v)) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'string'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h2 id="num">num</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Validate a <code>Number</code> argument</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.num = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (<span class="keyword">typeof</span> v !== <span class="string">'number'</span>) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'number'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h2 id="bool">bool</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Validate a <code>Boolean</code> argument</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.bool = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (<span class="keyword">typeof</span> v !== <span class="string">'boolean'</span>) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'boolean'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h2 id="obj">obj</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Validate an <code>Object</code> argument</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.obj = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!F.isObj(v)) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'object'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <h2 id="udef">udef</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Validate an <code>undefined</code> argument</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.udef = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!F.isUdef(v)) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'undefined'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <h2 id="def">def</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Validate a not <code>undefined</code> argument (any value including <code>null</code>)</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.def = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!F.isDef(v)) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'any defined value'</span>, <span class="keyword">typeof</span> v, v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <h2 id="inst">inst</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>Validate an object that must be an instance of the given class</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>c - <code>Function</code> Constructor to compare to</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.inst = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, c, func)</span> {</span>
+        <span class="keyword">if</span> (!F.isInst(v, c)) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'instance of '</span> + F.toStr(v),
+                !!v &amp;&amp; !!v.constructor ? v.constructor.name : F.toStr(v), v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <h2 id="truthy">truthy</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>Validate that provided value is a truthy value</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.truthy = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!v) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'truthy'</span>, !F.toBool(v), v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <h2 id="falsy">falsy</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>Validate that provided value is a falsy value</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>n - <code>String</code> Name of the argument as in the function declaration</li>
+<li>v - <code>mixed</code> Value to test</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.falsy = <span class="function"><span class="keyword">function</span> <span class="params">(n, v, func)</span> {</span>
+        <span class="keyword">if</span> (!!v) {
+            <span class="keyword">throw</span> F.e(n, func, <span class="string">'falsy'</span>, !!F.toBool(v), v);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p><a name="test"></a></p>
+<h1 id="test-functions">Test functions</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <h2 id="isfn">isFn</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>Check if value is a <code>Function</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isFn = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> obj.toString.call(v) === <span class="string">'[object Function]'</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <h2 id="isarr">isArr</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>Check if value is an <code>Array</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isArr = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> obj.toString.call(v) === <span class="string">'[object Array]'</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <h2 id="isbool">isBool</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>Check if value is a <code>Boolean</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isBool = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> <span class="keyword">typeof</span> v === <span class="string">'boolean'</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <h2 id="isstr">isStr</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>Check if value is a <code>String</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isStr = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> <span class="keyword">typeof</span> v === <span class="string">'string'</span> &amp;&amp; !!v;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <h2 id="isobj">isObj</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>Check if value is an <code>Object</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isObj = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> <span class="keyword">typeof</span> v === <span class="string">'object'</span> &amp;&amp; !!v &amp;&amp; v.constructor === obj.constructor;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <h2 id="isudef">isUdef</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p>Check if value is <code>undefined</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isUdef = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> <span class="string">'undefined'</span> === <span class="keyword">typeof</span> v;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-80">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-80">&#182;</a>
+              </div>
+              <h2 id="isdef">isDef</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-81">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-81">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-82">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-82">&#182;</a>
+              </div>
+              <p>Check if value is not <code>undefined</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-83">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-83">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-84">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-84">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isDef = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> <span class="string">'undefined'</span> !== <span class="keyword">typeof</span> v;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-85">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-85">&#182;</a>
+              </div>
+              <h2 id="isnum">isNum</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-86">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-86">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-87">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-87">&#182;</a>
+              </div>
+              <p>Check if <code>v</code> is a number and is not <code>NaN</code>.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-88">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-88">&#182;</a>
+              </div>
+              <p>Taken from <a href="https://raw.github.com/bestiejs/lodash/master/lodash.js">https://raw.github.com/bestiejs/lodash/master/lodash.js</a></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-89">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-89">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-90">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-90">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isNum = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> (<span class="keyword">typeof</span> v === <span class="string">'number'</span> || obj.toString.call(v) === <span class="string">'[object Number]'</span>) &amp;&amp; !isNaN(v);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-91">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-91">&#182;</a>
+              </div>
+              <h2 id="isint">isInt</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-92">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-92">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-93">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-93">&#182;</a>
+              </div>
+              <p>Check if the supplied value is integer</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-94">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-94">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-95">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-95">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isInt = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> F.isNum(v) &amp;&amp; (v % <span class="number">1</span> === <span class="number">0</span>);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-96">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-96">&#182;</a>
+              </div>
+              <h2 id="isfloat">isFloat</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-97">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-97">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-98">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-98">&#182;</a>
+              </div>
+              <p>Check if the supplied value is float.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-99">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-99">&#182;</a>
+              </div>
+              <p>1.0 is consider a integer since stored as 1</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-100">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-100">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-101">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-101">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isFloat = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> (F.isNum(v) &amp;&amp; (v % <span class="number">1</span> !== <span class="number">0</span>));
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-102">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-102">&#182;</a>
+              </div>
+              <h2 id="isinst">isInst</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-103">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-103">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-104">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-104">&#182;</a>
+              </div>
+              <p>Check if the supplied value is an instance of given class.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-105">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-105">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+<li>c - <code>Function</code> Class to compare to</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-106">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-106">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isInst = <span class="function"><span class="keyword">function</span> <span class="params">(v, c)</span> {</span>
+        <span class="keyword">try</span> {
+            <span class="keyword">return</span> v <span class="keyword">instanceof</span> c;
+        } <span class="keyword">catch</span> (e) {}
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-107">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-107">&#182;</a>
+              </div>
+              <h2 id="isnone">isNone</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-108">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-108">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-109">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-109">&#182;</a>
+              </div>
+              <p>Check if the supplied value is <code>null</code> or <code>undefined</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-110">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-110">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-111">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-111">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isNone = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> v === <span class="literal">null</span> || F.isUdef(v);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-112">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-112">&#182;</a>
+              </div>
+              <h2 id="isnotnone">isNotNone</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-113">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-113">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-114">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-114">&#182;</a>
+              </div>
+              <p>Check if the supplied value is not <code>null</code> or <code>undefined</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-115">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-115">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to test</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-116">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-116">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.isNotNone = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> v !== <span class="literal">null</span> &amp;&amp; F.isDef(v);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-117">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-117">&#182;</a>
+              </div>
+              <h2 id="implement">implement</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-118">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-118">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-119">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-119">&#182;</a>
+              </div>
+              <p>Check if the supplied value is an object that implements an interface</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-120">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-120">&#182;</a>
+              </div>
+              <p>An interface here is a list of function names.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-121">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-121">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>obj - <code>mixed</code> Value to test</li>
+<li>interfazz - <code>Array</code> Interface to implement</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-122">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-122">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> True is test succeed, false otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.implement = <span class="function"><span class="keyword">function</span> <span class="params">(obj, interfazz)</span> {</span>
+        <span class="keyword">var</span> i,
+            l;
+
+        F.arr(<span class="string">'interfazz'</span>, interfazz, <span class="string">'F.implement'</span>);
+
+        l = interfazz.length;
+
+        <span class="keyword">if</span>(F.isNone(obj)) {
+            <span class="keyword">return</span> <span class="literal">false</span>;
+        }
+
+        <span class="keyword">for</span> (i = <span class="number">0</span> ; i &lt; l ; i += <span class="number">1</span>) {
+            <span class="keyword">if</span> (!F.isFn(obj[interfazz[i]])) {
+                <span class="keyword">return</span> <span class="literal">false</span>;
+            }
+        }
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-123">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-123">&#182;</a>
+              </div>
+              <p><a name="utils"></a></p>
+<h1 id="utilities-functions">Utilities functions</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-124">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-124">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-125">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-125">&#182;</a>
+              </div>
+              <h2 id="pint">pInt</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-126">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-126">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-127">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-127">&#182;</a>
+              </div>
+              <p>Handy <code>parseInt</code> method (on base 10). Returns a default if value is not parsable.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-128">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-128">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Number to parse</li>
+<li>def - <code>mixed</code> Default to return (Optional)</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-129">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-129">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Number</code> Parsed number if parsable, otherwise default value if provided, finally 0 if no default</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.pInt = <span class="function"><span class="keyword">function</span> <span class="params">(v, def)</span> {</span>
+        <span class="keyword">if</span>(!isNaN(v)) {
+            <span class="keyword">return</span> parseInt(v, <span class="number">10</span>);
+        }
+
+        <span class="keyword">return</span> def || <span class="number">0</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-130">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-130">&#182;</a>
+              </div>
+              <h2 id="pfloat">pFloat</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-131">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-131">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-132">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-132">&#182;</a>
+              </div>
+              <p>Handy <code>parseFloat</code> method. Returns a default if value is not parsable.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-133">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-133">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Number to parse</li>
+<li>def - <code>mixed</code> Default to return (Optional)</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-134">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-134">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Number</code> Parsed number if parsable, otherwise default value if provided, finally 0 if no default</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.pFloat = <span class="function"><span class="keyword">function</span> <span class="params">(v, def)</span> {</span>
+        <span class="keyword">if</span>(!isNaN(v)) {
+            v = parseFloat(v);
+            <span class="keyword">return</span> isNaN(v) ? def || <span class="number">0</span> : v;
+        }
+
+        <span class="keyword">return</span> def || <span class="number">0</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-135">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-135">&#182;</a>
+              </div>
+              <h2 id="tostr">toStr</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-136">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-136">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-137">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-137">&#182;</a>
+              </div>
+              <p>Handy <code>toString</code> method. Returns a default if value is not stringable (<code>null</code>, <code>undefined</code>).</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-138">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-138">&#182;</a>
+              </div>
+              <p>Uses the object <code>toString</code> function if object provides one.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-139">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-139">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to get a string representation from</li>
+<li>def - <code>mixed</code> Default to return (Optional)</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-140">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-140">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>String</code> String representation of value if available, otherwise default value if provided, finally an empty string if no default</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.toStr = <span class="function"><span class="keyword">function</span> <span class="params">(v, def)</span> {</span>
+        <span class="keyword">if</span> ( v === <span class="literal">null</span> || F.isUdef(v) ) {
+            <span class="keyword">return</span> def || <span class="string">''</span>;
+        }
+
+        <span class="keyword">if</span> (<span class="keyword">typeof</span> v.toString === fnType) {
+            <span class="keyword">return</span> v.toString () || def || <span class="string">''</span>;
+        }
+
+        v = String + v;
+        <span class="keyword">return</span> !v &amp;&amp; def ? def : v;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-141">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-141">&#182;</a>
+              </div>
+              <h2 id="tostring">toString</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-142">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-142">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-143">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-143">&#182;</a>
+              </div>
+              <p>Alias of <code>FightErr.toStr()</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    F.toString = <span class="function"><span class="keyword">function</span> <span class="params">(v, def)</span> {</span>
+        <span class="keyword">return</span> F.toStr(v, def);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-144">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-144">&#182;</a>
+              </div>
+              <h2 id="toarr">toArr</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-145">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-145">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-146">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-146">&#182;</a>
+              </div>
+              <p>Handy <code>toArray</code> method. Returns a default if value is not an array</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-147">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-147">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to get a string representation from</li>
+<li>def - <code>Array</code> Default to return (Optional, default is an empty array)</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-148">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-148">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Array</code> Provided array it valid, default array or empty array otherwise</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.toArr = <span class="function"><span class="keyword">function</span> <span class="params">(v, def)</span> {</span>
+        <span class="keyword">if</span> (!F.isArr(v)) {
+            <span class="keyword">return</span> F.isArr(def) ? def : [];
+        }
+
+        <span class="keyword">return</span> v;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-149">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-149">&#182;</a>
+              </div>
+              <h2 id="tobool">toBool</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-150">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-150">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-151">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-151">&#182;</a>
+              </div>
+              <p>Ensure that a value is a boolean</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-152">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-152">&#182;</a>
+              </div>
+              <p>If value is strictly equal to <code>true</code>, returns <code>true</code>. Otherwise, return <code>false</code>.
+That means that any value that is not a <code>true</code> boolean returns false.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-153">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-153">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Value to ensure <code>Boolean</code> type</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-154">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-154">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Boolean</code> Either true or false</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.toBool = <span class="function"><span class="keyword">function</span> <span class="params">(v)</span> {</span>
+        <span class="keyword">return</span> v === <span class="literal">true</span> ? v : <span class="literal">false</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-155">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-155">&#182;</a>
+              </div>
+              <h2 id="range">range</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-156">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-156">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-157">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-157">&#182;</a>
+              </div>
+              <p>Check and returns a number within a range.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-158">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-158">&#182;</a>
+              </div>
+              <p>If number is not in the range and no default value is provided, the number is set to the min or max value depending it’s closer to one or another.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-159">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-159">&#182;</a>
+              </div>
+              <p>Comparison between number and min/max values is inclusive. Any number equal to min or max values will be valid.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-160">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-160">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>v - <code>mixed</code> Number to check</li>
+<li>min - <code>Number</code> Lower bound of the range</li>
+<li>max - <code>Number</code> Upper bound of the range</li>
+<li>def - <code>Number</code> Default to return (Optional)</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-161">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-161">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Number</code> Resulting value</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.range = <span class="function"><span class="keyword">function</span> <span class="params">(v, min, max, def)</span> {</span>
+        <span class="keyword">if</span> ( !F.isNum(v) ) {
+            <span class="keyword">return</span> F.isNum(def) ? def : <span class="number">0</span>;
+        }
+
+        F.num(<span class="string">'min'</span>, min, <span class="string">'F.range'</span>);
+        F.num(<span class="string">'max'</span>, max, <span class="string">'F.range'</span>);
+
+        <span class="keyword">if</span> (min &gt; max) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">'F.range: Min value must be less than max value'</span>);
+        }
+
+        <span class="keyword">if</span> (v &lt; min) {
+            <span class="keyword">if</span> (F.isNum(def)) {
+                <span class="keyword">return</span> def;
+            }
+            v = min;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (v &gt; max) {
+            <span class="keyword">if</span> (F.isNum(def)) {
+                <span class="keyword">return</span> def;
+            }
+            v = max;
+        }
+
+        <span class="keyword">return</span> v;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-162">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-162">&#182;</a>
+              </div>
+              <h2 id="len">len</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-163">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-163">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-164">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-164">&#182;</a>
+              </div>
+              <p>Get the length of an array in an infallible way - that means that it returns 0 if given object is an array</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-165">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-165">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>a - <code>mixed</code> Object that we suppose to be an array to get length from</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-166">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-166">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Number</code> Length of the array if parameter given is an array, 0 otherwsie</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.len = <span class="function"><span class="keyword">function</span> <span class="params">(a)</span> {</span>
+        <span class="keyword">return</span> F.isArr(a) || (!!a &amp;&amp; a.hasOwnProperty(<span class="string">'length'</span>)) ? a.length : <span class="number">0</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-167">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-167">&#182;</a>
+              </div>
+              <h2 id="argtoarr">argToArr</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-168">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-168">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-169">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-169">&#182;</a>
+              </div>
+              <p>Get a regular <code>Array</code> from a javascript <code>arguments</code> object.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-170">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-170">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>args_obj - <code>arguments</code> JS Function arguments object</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-171">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-171">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Array</code> Resulting array</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.argToArr = <span class="function"><span class="keyword">function</span> <span class="params">(args_obj)</span> {</span>
+        <span class="keyword">return</span> !!args_obj ? Array.prototype.slice.call(args_obj) : [];
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-172">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-172">&#182;</a>
+              </div>
+              <h2 id="error">error</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-173">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-173">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-174">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-174">&#182;</a>
+              </div>
+              <p>Throw an error</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-175">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-175">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>msg - <code>String</code> Error message</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.error = <span class="function"><span class="keyword">function</span> <span class="params">( msg )</span> {</span>
+        <span class="keyword">if</span> ( DEBUG ) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> Error (<span class="string">'[ERROR] '</span> + msg);
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-176">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-176">&#182;</a>
+              </div>
+              <p>TODO: How to manage errors in production</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-177">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-177">&#182;</a>
+              </div>
+              <h2 id="log">log</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-178">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-178">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-179">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-179">&#182;</a>
+              </div>
+              <p>Log a message in the console if <code>DEBUG</code> is set to true.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-180">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-180">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>msg - <code>mixed</code> Something to log</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.log = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+        <span class="keyword">if</span> ( DEBUG &amp;&amp; has_console) {
+            <span class="keyword">var</span> args = F.argToArr(arguments);
+            <span class="keyword">if</span>(chrome) {
+                args.unshift(<span class="string">'font-weight:bold;color: #55E;'</span>);
+                args.unshift(<span class="string">'%c[DEBUG]'</span>);
+            } <span class="keyword">else</span> {
+                args.unshift(<span class="string">'[DEBUG]'</span>);
+            }
+            console.log.apply(console, args);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-181">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-181">&#182;</a>
+              </div>
+              <h2 id="notice">notice</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-182">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-182">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-183">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-183">&#182;</a>
+              </div>
+              <p>Alias of <code>FightErr.log()</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.notice = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+        F.log.apply(F, F.argToArr(arguments));
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-184">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-184">&#182;</a>
+              </div>
+              <h2 id="warn">warn</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-185">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-185">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-186">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-186">&#182;</a>
+              </div>
+              <p>Log a warning message in the console if <code>DEBUG</code> is set to true.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-187">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-187">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>msg - <code>mixed</code> Something to log</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.warn = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+        <span class="keyword">if</span> ( DEBUG &amp;&amp; has_console) {
+            <span class="keyword">var</span> args = F.argToArr(arguments);
+            <span class="keyword">if</span>(chrome) {
+                args.unshift(<span class="string">'font-weight:bold;color: #f3a600;'</span>);
+                args.unshift(<span class="string">'%c[WARNING]'</span>);
+            } <span class="keyword">else</span> {
+                args.unshift(<span class="string">'[WARNING]'</span>);
+            }
+            args.push(<span class="string">"\n"</span>+F.stackTraceCleanup(printStackTrace({guess: <span class="literal">false</span>}))[<span class="number">0</span>].split(<span class="string">' '</span>)[<span class="number">0</span>]);
+            console.warn.apply(console,args);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-188">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-188">&#182;</a>
+              </div>
+              <h2 id="deprecated">deprecated</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-189">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-189">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-190">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-190">&#182;</a>
+              </div>
+              <p>Log a warning message about deprecation of a method/class</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-191">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-191">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>name - <code>String</code> Name of the deprecated class/function/property</li>
+<li>replacement - <code>String</code> Name of the replacement to use
+(Optional, default is to add message stating that there is no replacement)</li>
+<li>note - <code>String</code> A message to append to deprecated message (Optional)</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.deprecated = <span class="function"><span class="keyword">function</span> <span class="params">( name, replacement, note )</span> {</span>
+        <span class="keyword">if</span> ( DEBUG &amp;&amp; has_console) {
+            <span class="keyword">var</span> args = F.argToArr(arguments),
+                msg = <span class="string">'"'</span> + name + <span class="string">'" is deprecated '</span> +
+                (!!replacement ? <span class="string">'in favor of "'</span>+ replacement + <span class="string">'"'</span> :
+                    <span class="string">' without any replacement suggested'</span>) + <span class="string">'.\n'</span> + (note ? <span class="string">'Message: '</span> + note + <span class="string">'\n'</span>: <span class="string">''</span>);
+
+            args.shift();
+            args.shift();
+
+            <span class="keyword">if</span>(chrome) {
+                args.unshift(<span class="string">'font-weight:bold;color: #f3a600;'</span>);
+                args.unshift(<span class="string">'%c[DEPRECATED]'</span>);
+            } <span class="keyword">else</span> {
+                args.unshift(<span class="string">'[DEPRECATED]'</span>);
+            }
+            args.unshift(msg);
+            args.push(F.stackTraceCleanup(printStackTrace({guess: <span class="literal">false</span>})).join(<span class="string">'\n'</span>));
+
+            console.warn.apply(console,args);
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-192">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-192">&#182;</a>
+              </div>
+              <h2 id="assert">assert</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-193">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-193">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-194">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-194">&#182;</a>
+              </div>
+              <p>Test a condition, and raise an error with given message if condition is not true</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-195">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-195">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>condition - <code>mixed</code> Anything that is not 0, undefined, null, an empty string</li>
+<li>msg - <code>mixed</code> Message to show in error report</li>
+<li>doContinue - <code>Boolean</code> Avoid raising an error, just log a failure message and continue</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.assert = <span class="function"><span class="keyword">function</span> <span class="params">( condition, msg, doContinue )</span> {</span>
+        <span class="keyword">if</span> ( !!condition ) {
+            <span class="keyword">return</span>;
+        }
+        <span class="keyword">if</span> (!!doContinue &amp;&amp; DEBUG) {
+            F.log (<span class="string">'[FAILURE] '</span> + msg);
+        } <span class="keyword">else</span> {
+            <span class="keyword">throw</span> <span class="keyword">new</span> Error (<span class="string">'[FAILURE] '</span> + (msg || <span class="string">''</span>));
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-196">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-196">&#182;</a>
+              </div>
+              <h2 id="e">e</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-197">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-197">&#182;</a>
+              </div>
+              <p>Get an illegal argument error</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-198">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-198">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>name - <code>String</code> Name of the argument as in the function declaration</li>
+<li>func - <code>String</code> Name of the function where the argument type is checked</li>
+<li>required - <code>String</code> Type required</li>
+<li>given - <code>String</code> Type given</li>
+<li>value - <code>mixed</code> Given value</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    F.e = <span class="function"><span class="keyword">function</span> <span class="params">(name , func, required, given, value)</span> {</span>
+        F.warn(<span class="string">'Illegal argument type error: Argument '</span> + name + <span class="string">' of function ['</span> + func +
+            <span class="string">'] should be ['</span> + required + <span class="string">'] but is ['</span> + given + <span class="string">']. Argument value: '</span>, value);
+        <span class="keyword">if</span>(window.printStackTrace) {
+            F.warn(F.stackTraceCleanup(printStackTrace));
+        }
+        <span class="keyword">return</span> <span class="keyword">new</span> TypeError (<span class="string">'Illegal argument error'</span>);
+    };
+
+    <span class="keyword">if</span> (DEBUG) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-199">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-199">&#182;</a>
+              </div>
+              <h2 id="stacktracecleanup">stackTraceCleanup</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-200">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-200">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-201">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-201">&#182;</a>
+              </div>
+              <p>Cleanup stack trace from unwanted lines</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-202">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-202">&#182;</a>
+              </div>
+              <p><strong>Available in DEBUG mode only</strong></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-203">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-203">&#182;</a>
+              </div>
+              <p>Parameters:</p>
+<ul>
+<li>stacktrace - <code>Array</code> The StackTrace as returned by <code>printStackTrace</code></li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-204">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-204">&#182;</a>
+              </div>
+              <p>Returns:</p>
+<ul>
+<li><code>Array</code> A clean stack trace</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+        F.stackTraceCleanup = <span class="function"><span class="keyword">function</span> <span class="params">(stacktrace)</span> {</span>
+            <span class="keyword">while</span> (
+                stacktrace.length &gt; <span class="number">0</span> &amp;&amp;
+                (stacktrace[<span class="number">0</span>].indexOf(<span class="string">'printStackTrace'</span>) &gt; -<span class="number">1</span> ||
+                    stacktrace[<span class="number">0</span>].indexOf(<span class="string">'F.deprecated'</span>) &gt; -<span class="number">1</span> ||
+                    stacktrace[<span class="number">0</span>].indexOf(<span class="string">'F.warn'</span>) &gt; -<span class="number">1</span>)
+            ) {
+                stacktrace.shift();
+            }
+
+            <span class="keyword">return</span> stacktrace;
+        };
+    }
+
+}(FightErr));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
