@@ -58,17 +58,34 @@ module.exports = function (grunt) {
         docco: {
             src: ['src/**/*.js'],
             options: {
-                output: 'docs/'
+                output: 'docs'
             }
+        },
+
+        copy: {
+            docs: {
+                src: 'docs/<%= pkg.name %>.html',
+                dest: 'docs/index.html'
+            }
+        },
+
+        'gh-pages': {
+            options: {
+                base: 'docs'
+            },
+            src: '**/*'
         }
     });
 
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    grunt.loadNpmTasks('grunt-docco');
+    grunt.loadNpmTasks('grunt-docco3');
+    grunt.loadNpmTasks('grunt-gh-pages');
 
     grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('docs', ['docco', 'copy:docs', 'gh-pages']);
     grunt.registerTask('default', ['test', 'uglify']);
 };
