@@ -4,13 +4,14 @@
   "homepage": "https://github.com/NextUserSF/FightErr",
   "authors": [],
   "description": "JavaScript library to ease type checking and variables value validation",
-  "main": "lib/FightErr.min.js",
+  "main": "build/FightErr.min.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "spec"
   ]
 }
