@@ -1,6 +1,38 @@
 /*jshint node: true*/
 /*global F, FightErr, console, DEBUG, printStackTrace*/
 
+// FightErr offers a bunch of functions to help validate arguments of your functions.
+//
+// It contains three kind of functions:
+// * [Validation functions](#validation): test type and throw an error if it's not the one required
+// * [Test functions](#test): just test type of a variable value and return a boolean
+// * [Utilities functions](#utils)
+//
+// You can use either `F` or `FightErr` keywords to access functions.
+//
+// Example:
+//
+//      var myFunction = function (strArg, numArg) {
+//        // Check arguments
+//        // Note that we give the function name so
+//        // the error message is relevant
+//        F.str('strArg', strArg, 'myFunction');
+//        F.num('numArg', numArg, 'myFunction');
+//
+//        // Arguments are valid
+//        console.log(strArg + " magic number is "
+//          + F.toStr(numArg));
+//      }
+//
+//      myFunction ( "Don't panic", 42 ) ;
+//      // No error
+//
+//      myFunction ( "Don't panic", {} ) ;
+//      // Error thrown: second argument is not a number
+//
+//      myFunction ( ["Don't panic"], 42 ) ;
+//      // Error thrown: first argument is not a string
+
 if ('undefined' === typeof F) {
     /*jshint -W020 */
     F = FightErr = function(){
@@ -19,41 +51,6 @@ if ('undefined' === typeof F) {
     }
 }
 
-/*
-    Package: FightErr
-
-    FightErr offers a bunch of functions to help validate arguments of your functions.
-
-    It contains three kind of functions:
-    - Validation functions: test type and throw an error if it's not the one required
-    - Test functions: just test type of a variable value and return a boolean
-    - Utilities functions
-
-    You can use either `F` or `FightErr` keywords to access functions.
-
-    Example:
-
-    (start code)
-    var myFunction = function ( strArg, numArg ) {
-        // Check arguments
-        // Note that we give the function name so the error message is relevant
-        F.str('strArg', strArg, 'myFunction');
-        F.num('numArg', numArg, 'myFunction');
-
-        // Arguments are valid
-        console.log(strArg + " magic number is " + F.toStr(numArg));
-    }
-
-    myFunction ( "Don't panic", 42 ) ;
-    // No error
-
-    myFunction ( "Don't panic", {} ) ;
-    // Error thrown: second argument is not a number
-
-    myFunction ( ["Don't panic"], 42 ) ;
-    // Error thrown: first argument is not a string
-    (end)
-*/
 (function (F) {
 
     "use strict";
@@ -63,145 +60,149 @@ if ('undefined' === typeof F) {
         chrome = !!window.chrome,
         has_console = !!console;
 
-    /*
-        Function: fn
+    // <a name="validation"></a>
+    // Validation functions
+    // ====================
 
-        Validate a `Function` argument
+    // fn
+    // --
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Validate a `Function` argument
+
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.fn = function (n, v, func) {
         if (!F.isFn(v)) {
             throw F.e(n, func, 'function', typeof v, v);
         }
     };
 
-    /*
-        Function: arr
+    // arr
+    // ---
 
-        Validate an `Array` argument
+    // Validate an `Array` argument
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.arr = function (n, v, func) {
         if (!F.isArr(v)) {
             throw F.e(n, func, 'Array', typeof v, v);
         }
     };
 
-    /*
-        Function: str
+    // str
+    // ---
 
-        Validate a `String` argument
+    // Validate a `String` argument
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.str = function (n, v, func) {
         if (!F.isStr(v)) {
             throw F.e(n, func, 'string', typeof v, v);
         }
     };
 
-    /*
-        Function: num
+    // num
+    // ---
 
-        Validate a `Number` argument
+    // Validate a `Number` argument
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.num = function (n, v, func) {
         if (typeof v !== 'number') {
             throw F.e(n, func, 'number', typeof v, v);
         }
     };
 
-    /*
-        Function: bool
+    // bool
+    // ----
 
-        Validate a `Boolean` argument
+    // Validate a `Boolean` argument
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.bool = function (n, v, func) {
         if (typeof v !== 'boolean') {
             throw F.e(n, func, 'boolean', typeof v, v);
         }
     };
 
-    /*
-        Function: obj
+    // obj
+    // ---
 
-        Validate an `Object` argument
+    // Validate an `Object` argument
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.obj = function (n, v, func) {
         if (!F.isObj(v)) {
             throw F.e(n, func, 'object', typeof v, v);
         }
     };
 
-    /*
-        Function: udef
+    // udef
+    // ----
 
-        Validate an `undefined` argument
+    // Validate an `undefined` argument
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.udef = function (n, v, func) {
         if (!F.isUdef(v)) {
             throw F.e(n, func, 'undefined', typeof v, v);
         }
     };
 
-    /*
-        Function: def
+    // def
+    // ---
 
-        Validate a not `undefined` argument (any value including `null`)
+    // Validate a not `undefined` argument (any value including `null`)
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.def = function (n, v, func) {
         if (!F.isDef(v)) {
             throw F.e(n, func, 'any defined value', typeof v, v);
         }
     };
 
-    /*
-        Function: inst
+    // inst
+    // ----
 
-        Validate an object that must be an instance of the given class
+    // Validate an object that must be an instance of the given class
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            c - `Function` Constructor to compare to
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * c - `Function` Constructor to compare to
+    // * func - `String` Name of the function where the argument type is checked
+
     F.inst = function (n, v, c, func) {
         if (!F.isInst(v, c)) {
             throw F.e(n, func, 'instance of ' + F.toStr(v),
@@ -209,50 +210,48 @@ if ('undefined' === typeof F) {
         }
     };
 
-    /*
-        Function: truthy
+    // truthy
+    // ------
 
-        Validate that provided value is a truthy value
+    // Validate that provided value is a truthy value
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
+
     F.truthy = function (n, v, func) {
         if (!v) {
             throw F.e(n, func, 'truthy', !F.toBool(v), v);
         }
     };
 
+    // falsy
+    // -----
 
-    /*
-        Function: falsy
+    // Validate that provided value is a falsy value
 
-        Validate that provided value is a falsy value
+    // Parameters:
+    // * n - `String` Name of the argument as in the function declaration
+    // * v - `mixed` Value to test
+    // * func - `String` Name of the function where the argument type is checked
 
-        Parameters:
-            n - `String` Name of the argument as in the function declaration
-            v - `mixed` Value to test
-            func - `String` Name of the function where the argument type is checked
-    */
     F.falsy = function (n, v, func) {
         if (!!v) {
             throw F.e(n, func, 'falsy', !!F.toBool(v), v);
         }
     };
 
+    // assert
+    // ------
 
-    /*
-        Function: assert
+    // Simple assertion method, if value is not truthy, throw an error
 
-        Simple assertion method, if value is not truthy, throw an error
+    // Parameters:
+    // * v - `mixed` Value to test
+    // * e - `String` Error message
+    // * c - `Boolean` Avoid raising an error, just log a failure message and continue
 
-        Parameters:
-            v - `mixed` Value to test
-            e - `String` Error message
-            c - `Boolean` Avoid raising an error, just log a failure message and continue
-    */
     F.assert = function (v, e, c) {
         if (!v) {
             if (!c) {
@@ -263,185 +262,176 @@ if ('undefined' === typeof F) {
         }
     };
 
+    // <a name="test"></a>
+    // Test functions
+    // ==============
 
-    /*
-        Function: isFn
+    // isFn
+    // ----
 
-        Check if value is a `Function`
+    // Check if value is a `Function`
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
+
     F.isFn = function (v) {
         return obj.toString.call(v) === '[object Function]';
     };
 
+    // isArr
+    // -----
 
-    /*
-        Function: isArr
+    // Check if value is an `Array`
 
-        Check if value is an `Array`
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Parameters:
-            v - `mixed` Value to test
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
     F.isArr = function (v) {
         return obj.toString.call(v) === '[object Array]';
     };
 
-    /*
-        Function: isBool
+    // isBool
+    // ------
 
-        Check if value is a `Boolean`
+    // Check if value is a `Boolean`
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-
-    */
     F.isBool = function (v) {
         return typeof v === 'boolean';
     };
 
-    /*
-        Function: isStr
+    // isStr
+    // -----
 
-        Check if value is a `String`
+    // Check if value is a `String`
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-
-    */
     F.isStr = function (v) {
         return typeof v === 'string' && !!v;
     };
 
-    /*
-        Function: isObj
+    // isObj
+    // -----
 
-        Check if value is an `Object`
+    // Check if value is an `Object`
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-
-    */
     F.isObj = function (v) {
         return typeof v === 'object' && !!v && v.constructor === obj.constructor;
     };
 
-    /*
-        Function: isUdef
+    // isUdef
+    // ------
 
-        Check if value is `undefined`
+    // Check if value is `undefined`
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-
-    */
     F.isUdef = function (v) {
         return 'undefined' === typeof v;
     };
 
-    /*
-        Function: isDef
+    // isDef
+    // -----
 
-        Check if value is not `undefined`
+    // Check if value is not `undefined`
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-
-    */
     F.isDef = function (v) {
         return 'undefined' !== typeof v;
     };
 
-    /*
-        Function: isNum
+    // isNum
+    // -----
 
-        Check if `v` is a number and is not `NaN`.
-       
-        Taken from <https://raw.github.com/bestiejs/lodash/master/lodash.js>
+    // Check if `v` is a number and is not `NaN`.
 
-        Parameters:
-            v - `mixed` Value to test
+    // Taken from <https://raw.github.com/bestiejs/lodash/master/lodash.js>
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
+    // Parameters:
+    // * v - `mixed` Value to test
+
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
+
     F.isNum = function (v) {
         return (typeof v === 'number' || obj.toString.call(v) === '[object Number]') && !isNaN(v);
     };
 
-    /*
-        Function: isInt
+    // isInt
+    // -----
 
-        Check if the supplied value is integer
+    // Check if the supplied value is integer
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
+
     F.isInt = function (v) {
         return F.isNum(v) && (v % 1 === 0);
     };
 
-    /*
-        Function: isFloat
+    // isFloat
+    // -------
 
-        Check if the supplied value is float.
+    // Check if the supplied value is float.
 
-        1.0 is consider a integer since stored as 1
+    // 1.0 is consider a integer since stored as 1
 
-        Parameters:
-            v - `mixed` Value to test
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
+
     F.isFloat = function (v) {
         return (F.isNum(v) && (v % 1 !== 0));
     };
 
+    // isInst
+    // ------
 
-    /*
-        Function: isInst
+    // Check if the supplied value is an instance of given class.
 
-        Check if the supplied value is an instance of given class.
+    // Parameters:
+    // * v - `mixed` Value to test
+    // * c - `Function` Class to compare to
 
-        Parameters:
-            v - `mixed` Value to test
-            c - `Function` Class to compare to
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
     F.isInst = function (v, c) {
         try {
             return v instanceof c;
@@ -449,54 +439,50 @@ if ('undefined' === typeof F) {
         return false;
     };
 
+    // isNone
+    // ------
 
-    /*
-        Function: isNone
+    // Check if the supplied value is `null` or `undefined`
 
-        Check if the supplied value is `null` or `undefined`
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Parameters:
-            v - `mixed` Value to test
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
     F.isNone = function (v) {
         return v === null || F.isUdef(v);
     };
 
+    // isNotNone
+    // ---------
 
-    /*
-        Function: isNotNone
+    // Check if the supplied value is not `null` or `undefined`
 
-        Check if the supplied value is not `null` or `undefined`
+    // Parameters:
+    // * v - `mixed` Value to test
 
-        Parameters:
-            v - `mixed` Value to test
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
     F.isNotNone = function (v) {
         return v !== null && F.isDef(v);
     };
 
+    // implement
+    // ---------
 
+    // Check if the supplied value is an object that implements an interface
 
-    /*
-        Function: implement
+    // An interface here is a list of function names.
 
-        Check if the supplied value is an object that implements an interface
+    // Parameters:
+    // * obj - `mixed` Value to test
+    // * interfazz - `Array` Interface to implement
 
-        An interface here is a list of function names.
+    // Returns:
+    // * `Boolean` True is test succeed, false otherwise
 
-        Parameters:
-            obj - `mixed` Value to test
-            interfazz - `Array` Interface to implement
-
-        Returns:
-        `Boolean` True is test succeed, false otherwise
-    */
     F.implement = function (obj, interfazz) {
         var i,
             l;
@@ -517,19 +503,22 @@ if ('undefined' === typeof F) {
         return true;
     };
 
+    // <a name="utils"></a>
+    // Utilities functions
+    // ===================
 
-    /*
-        Function: pInt
+    // pInt
+    // ----
 
-        Handy `parseInt` method (on base 10). Returns a default if value is not parsable.
+    // Handy `parseInt` method (on base 10). Returns a default if value is not parsable.
 
-        Parameters:
-            v - `mixed` Number to parse
-            def - `mixed` Default to return (Optional)
+    // Parameters:
+    // * v - `mixed` Number to parse
+    // * def - `mixed` Default to return (Optional)
 
-        Returns:
-        `Number` Parsed number if parsable, otherwise default value if provided, finally 0 if no default
-    */
+    // Returns:
+    // * `Number` Parsed number if parsable, otherwise default value if provided, finally 0 if no default
+
     F.pInt = function (v, def) {
         if(!isNaN(v)) {
             return parseInt(v, 10);
@@ -538,19 +527,18 @@ if ('undefined' === typeof F) {
         return def || 0;
     };
 
+    // pFloat
+    // ------
 
-    /*
-        Function: pFloat
+    // Handy `parseFloat` method. Returns a default if value is not parsable.
 
-        Handy `parseFloat` method. Returns a default if value is not parsable.
+    // Parameters:
+    // * v - `mixed` Number to parse
+    // * def - `mixed` Default to return (Optional)
 
-        Parameters:
-            v - `mixed` Number to parse
-            def - `mixed` Default to return (Optional)
+    // Returns:
+    // * `Number` Parsed number if parsable, otherwise default value if provided, finally 0 if no default
 
-        Returns:
-        `Number` Parsed number if parsable, otherwise default value if provided, finally 0 if no default
-    */
     F.pFloat = function (v, def) {
         if(!isNaN(v)) {
             v = parseFloat(v);
@@ -560,21 +548,20 @@ if ('undefined' === typeof F) {
         return def || 0;
     };
 
+    // toStr
+    // -----
 
-    /*
-        Function: toStr
+    // Handy `toString` method. Returns a default if value is not stringable (`null`, `undefined`).
 
-        Handy `toString` method. Returns a default if value is not stringable (`null`, `undefined`).
+    // Uses the object `toString` function if object provides one.
 
-        Uses the object `toString` function if object provides one.
+    // Parameters:
+    // * v - `mixed` Value to get a string representation from
+    // * def - `mixed` Default to return (Optional)
 
-        Parameters:
-            v - `mixed` Value to get a string representation from
-            def - `mixed` Default to return (Optional)
+    // Returns:
+    // * `String` String representation of value if available, otherwise default value if provided, finally an empty string if no default
 
-        Returns:
-        `String` String representation of value if available, otherwise default value if provided, finally an empty string if no default
-    */
     F.toStr = function (v, def) {
         if ( v === null || F.isUdef(v) ) {
             return def || '';
@@ -588,29 +575,26 @@ if ('undefined' === typeof F) {
         return !v && def ? def : v;
     };
 
+    // toString
+    // --------
 
-    /*
-        Function: toString
-
-        Alias of <FightErr.toStr>
-    */
+    // Alias of `FightErr.toStr()`
     F.toString = function (v, def) {
         return F.toStr(v, def);
     };
 
+    // toArr
+    // -----
 
-    /*
-        Function: toArr
+    // Handy `toArray` method. Returns a default if value is not an array
 
-        Handy `toArray` method. Returns a default if value is not an array
+    // Parameters:
+    // * v - `mixed` Value to get a string representation from
+    // * def - `Array` Default to return (Optional, default is an empty array)
 
-        Parameters:
-            v - `mixed` Value to get a string representation from
-            def - `Array` Default to return (Optional, default is an empty array)
+    // Returns:
+    // * `Array` Provided array it valid, default array or empty array otherwise
 
-        Returns:
-        `Array` Provided array it valid, default array or empty array otherwise
-    */
     F.toArr = function (v, def) {
         if (!F.isArr(v)) {
             return F.isArr(def) ? def : [];
@@ -619,46 +603,43 @@ if ('undefined' === typeof F) {
         return v;
     };
 
+    // toBool
+    // ------
 
-    /*
-        Function: toBool
+    // Ensure that a value is a boolean
 
-        Ensure that a value is a boolean
+    // If value is strictly equal to `true`, returns `true`. Otherwise, return `false`.
+    // That means that any value that is not a `true` boolean returns false.
 
-        If value is strictly equal to `true`, returns `true`. Otherwise, return `false`.
-        That means that any value that is not a `true` boolean returns false.
+    // Parameters:
+    // * v - `mixed` Value to ensure `Boolean` type
 
-        Parameters:
-            v - `mixed` Value to ensure `Boolean` type
+    // Returns:
+    // * `Boolean` Either true or false
 
-        Returns:
-        `Boolean` Either true or false
-    */
     F.toBool = function (v) {
         return v === true ? v : false;
     };
 
+    // range
+    // -----
 
-    /*
-        Function: range
+    // Check and returns a number within a range.
 
-        Check and returns a number within a range.
+    // If number is not in the range and no default value is provided, the number is set to the min or max value depending it's closer to one or another.
 
-        If number is not in the range and no default value is provided, the number is set to the min or max value depending it's closer to one or another.
+    // Comparison between number and min/max values is inclusive. Any number equal to min or max values will be valid.
 
-        Comparison between number and min/max values is inclusive. Any number equal to min or max values will be valid.
+    // Parameters:
+    // * v - `mixed` Number to check
+    // * min - `Number` Lower bound of the range
+    // * max - `Number` Upper bound of the range
+    // * def - `Number` Default to return (Optional)
 
-        Parameters:
-            v - `mixed` Number to check
-            min - `Number` Lower bound of the range
-            max - `Number` Upper bound of the range
-            def - `Number` Default to return (Optional)
+    // Returns:
+    // * `Number` Resulting value
 
-        Returns:
-        `Number` Resulting value
-    */
     F.range = function (v, min, max, def) {
-
         if ( !F.isNum(v) ) {
             return F.isNum(def) ? def : 0;
         }
@@ -685,61 +666,60 @@ if ('undefined' === typeof F) {
         return v;
     };
 
+    // len
+    // ---
 
-    /*
-        Function: len
+    // Get the length of an array in an infallible way - that means that it returns 0 if given object is an array
 
-        Get the length of an array in an infallible way - that means that it returns 0 if given object is an array
+    // Parameters:
+    // * a - `mixed` Object that we suppose to be an array to get length from
 
-        Parameters:
-            a - `mixed` Object that we suppose to be an array to get length from
+    // Returns:
+    // * `Number` Length of the array if parameter given is an array, 0 otherwsie
 
-        Returns:
-        `Number` Length of the array if parameter given is an array, 0 otherwsie
-    */
     F.len = function (a) {
         return F.isArr(a) || (!!a && a.hasOwnProperty('length')) ? a.length : 0;
     };
 
-    /*
-        Function: argToArr
+    // argToArr
+    // --------
 
-        Get a regular `Array` from a javascript `arguments` object.
+    // Get a regular `Array` from a javascript `arguments` object.
 
-        Parameters:
-            args_obj - `arguments` JS Function arguments object
+    // Parameters:
+    // * args_obj - `arguments` JS Function arguments object
 
-        Returns:
-        `Array` Resulting array
-    */
+    // Returns:
+    // * `Array` Resulting array
+
     F.argToArr = function (args_obj) {
         return !!args_obj ? Array.prototype.slice.call(args_obj) : [];
     };
 
-    /*
-        Function: error
+    // error
+    // -----
 
-        Throw an error
+    // Throw an error
 
-        Parameters:
-            msg - `String` Error message
-    */
+    // Parameters:
+    // * msg - `String` Error message
+
     F.error = function ( msg ) {
         if ( DEBUG ) {
             throw new Error ('[ERROR] ' + msg);
         }
-        
-        // @TODO: How to manage errors in production
+
+        // TODO: How to manage errors in production
     };
 
-    /*
-        Function: log
+    // log
+    // ---
 
-        Log a message in the console if `DEBUG` is set to true.
+    // Log a message in the console if `DEBUG` is set to true.
 
-        Parameters:
-            msg - `mixed` Something to log
-    */
+    // Parameters:
+    // * msg - `mixed` Something to log
+
     F.log = function () {
         if ( DEBUG && has_console) {
             var args = F.argToArr(arguments);
@@ -753,24 +733,23 @@ if ('undefined' === typeof F) {
         }
     };
 
-    /*
-        Function: notice
+    // notice
+    // ------
 
-        Alias of <FightErr.log>
-    */
+    // Alias of `FightErr.log()`
+
     F.notice = function () {
         F.log.apply(F, F.argToArr(arguments));
     };
 
+    // warn
+    // ----
 
-    /*
-        Function: warn
+    // Log a warning message in the console if `DEBUG` is set to true.
 
-        Log a warning message in the console if `DEBUG` is set to true.
+    // Parameters:
+    // * msg - `mixed` Something to log
 
-        Parameters:
-            msg - `mixed` Something to log
-    */
     F.warn = function () {
         if ( DEBUG && has_console) {
             var args = F.argToArr(arguments);
@@ -785,19 +764,17 @@ if ('undefined' === typeof F) {
         }
     };
 
-    
+    // deprecated
+    // ----------
 
-    /*
-        Function: deprecated
+    // Log a warning message about deprecation of a method/class
 
-        Log a warning message about deprecation of a method/class
+    // Parameters:
+    // * name - `String` Name of the deprecated class/function/property
+    // * replacement - `String` Name of the replacement to use
+    // (Optional, default is to add message stating that there is no replacement)
+    // * note - `String` A message to append to deprecated message (Optional)
 
-        Parameters:
-            name - `String` Name of the deprecated class/function/property
-            replacement - `String` Name of the replacement to use 
-                (Optional, default is to add message stating that there is no replacement)
-            note - `String` A message to append to deprecated message (Optional)
-    */
     F.deprecated = function ( name, replacement, note ) {
         if ( DEBUG && has_console) {
             var args = F.argToArr(arguments),
@@ -807,7 +784,7 @@ if ('undefined' === typeof F) {
 
             args.shift();
             args.shift();
-            
+
             if(chrome) {
                 args.unshift('font-weight:bold;color: #f3a600;');
                 args.unshift('%c[DEPRECATED]');
@@ -821,16 +798,16 @@ if ('undefined' === typeof F) {
         }
     };
 
-    /*
-        Function: assert
+    // assert
+    // ------
 
-        Test a condition, and raise an error with given message if condition is not true
+    // Test a condition, and raise an error with given message if condition is not true
 
-        Parameters:
-            condition - `mixed` Anything that is not 0, undefined, null, an empty string
-            msg - `mixed` Message to show in error report
-            doContinue - `Boolean` Avoid raising an error, just log a failure message and continue
-    */
+    // Parameters:
+    // * condition - `mixed` Anything that is not 0, undefined, null, an empty string
+    // * msg - `mixed` Message to show in error report
+    // * doContinue - `Boolean` Avoid raising an error, just log a failure message and continue
+
     F.assert = function ( condition, msg, doContinue ) {
         if ( !!condition ) {
             return;
@@ -841,18 +818,19 @@ if ('undefined' === typeof F) {
             throw new Error ('[FAILURE] ' + (msg || ''));
         }
     };
-    /*
-        Function: e
 
-        Get an illegal argument error
+    // e
+    // --
 
-        Parameters:
-            name - `String` Name of the argument as in the function declaration
-            func - `String` Name of the function where the argument type is checked
-            required - `String` Type required
-            given - `String` Type given
-            value - `mixed` Given value
-    */
+    // Get an illegal argument error
+
+    // Parameters:
+    // * name - `String` Name of the argument as in the function declaration
+    // * func - `String` Name of the function where the argument type is checked
+    // * required - `String` Type required
+    // * given - `String` Type given
+    // * value - `mixed` Given value
+
     F.e = function (name , func, required, given, value) {
         F.warn('Illegal argument type error: Argument ' + name + ' of function [' + func +
             '] should be [' + required + '] but is [' + given + ']. Argument value: ', value);
@@ -862,22 +840,20 @@ if ('undefined' === typeof F) {
         return new TypeError ('Illegal argument error');
     };
 
-
-
     if (DEBUG) {
-        /*
-            Function: stackTraceCleanup
+        // stackTraceCleanup
+        // -----------------
 
-            [DEBUG] Cleanup stack trace from unwanted lines
+        // Cleanup stack trace from unwanted lines
 
-            Available in DEBUG mode only
+        // __Available in DEBUG mode only__
 
-            Parameters:
-                stacktrace - `Array` The StackTrace as returned by `printStackTrace`
+        // Parameters:
+        // * stacktrace - `Array` The StackTrace as returned by `printStackTrace`
 
-            Returns:
-            `Array` A clean stack trace
-        */
+        // Returns:
+        // * `Array` A clean stack trace
+
         F.stackTraceCleanup = function (stacktrace) {
             while (
                 stacktrace.length > 0 &&
