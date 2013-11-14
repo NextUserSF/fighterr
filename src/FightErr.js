@@ -242,26 +242,6 @@ if ('undefined' === typeof F) {
         }
     };
 
-    // assert
-    // ------
-
-    // Simple assertion method, if value is not truthy, throw an error
-
-    // Parameters:
-    // * v - `mixed` Value to test
-    // * e - `String` Error message
-    // * c - `Boolean` Avoid raising an error, just log a failure message and continue
-
-    F.assert = function (v, e, c) {
-        if (!v) {
-            if (!c) {
-                throw new Error(e);
-            } else {
-                console.log ('[FAILURE] ' + e);
-            }
-        }
-    };
-
     // <a name="test"></a>
     // Test functions
     // ==============
