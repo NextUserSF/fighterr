@@ -1,0 +1,24 @@
+{
+  "name": "FightErr",
+  "version": "0.0.0",
+  "description": "JavaScript library to ease type checking and variables value validation",
+  "main": "lib/FightErr.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/NextUserSF/FightErr.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NextUserSF/FightErr/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jasmine": "~0.5.2",
+    "grunt-contrib-jshint": "~0.7.1",
+    "grunt-contrib-uglify": "~0.2.7"
+  }
+}
