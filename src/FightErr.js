@@ -54,7 +54,7 @@ if ('undefined' === typeof F) {
 
     var fnType = typeof function () {},
         obj = {},
-        chrome = !!window.chrome,
+        chrome = typeof window !== 'undefined' && !!window.chrome,
         has_console = !!console;
 
     // <a name="validation"></a>
