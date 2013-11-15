@@ -1,6 +1,3 @@
-/*jshint node: true*/
-/*global F, FightErr, console, DEBUG, printStackTrace*/
-
 // FightErr offers a bunch of functions to help validate arguments of your functions.
 //
 // It contains three kind of functions:
