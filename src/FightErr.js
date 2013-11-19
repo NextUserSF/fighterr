@@ -120,7 +120,7 @@ if ('undefined' === typeof F) {
     // * func - `String` Name of the function where the argument type is checked
 
     F.num = function (n, v, func) {
-        if (typeof v !== 'number') {
+        if (!F.isNum(v)) {
             throw F.e(n, func, 'number', typeof v, v);
         }
     };
