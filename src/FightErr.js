@@ -136,7 +136,7 @@ if ('undefined' === typeof F) {
     // * func - `String` Name of the function where the argument type is checked
 
     F.bool = function (n, v, func) {
-        if (typeof v !== 'boolean') {
+        if (!F.isBool(v)) {
             throw F.e(n, func, 'boolean', typeof v, v);
         }
     };
