@@ -81,7 +81,8 @@ module.exports = function (grunt) {
         push: {
             options: {
                 files: ['package.json', 'bower.json'],
-                commitFiles: ['-a']
+                commitFiles: ['-a'],
+                npm: true
             }
         }
     });
