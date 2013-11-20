@@ -76,6 +76,13 @@ module.exports = function (grunt) {
                 base: 'docs'
             },
             src: '**/*'
+        },
+
+        bump: {
+            options: {
+                files: ['package.json', 'bower.json'],
+                commitFiles: ['-a']
+            }
         }
     });
 
@@ -86,6 +93,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-docco3');
     grunt.loadNpmTasks('grunt-gh-pages');
+    grunt.loadNpmTasks('grunt-push-release');
 
     grunt.registerTask('test', ['jshint', 'jasmine']);
     grunt.registerTask('docs', ['docco', 'copy:docs', 'gh-pages']);
