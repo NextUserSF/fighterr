@@ -1,5 +1,5 @@
 {
-  "name": "FightErr",
+  "name": "fighterr",
   "version": "0.0.3",
   "description": "JavaScript library to ease type checking and variables value validation",
   "main": "build/FightErr.min.js",
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/NextUserSF/FightErr.git"
+    "url": "git://github.com/NextUserSF/fighterr.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/NextUserSF/FightErr/issues"
+    "url": "https://github.com/NextUserSF/fighterr/issues"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

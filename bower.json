@@ -1,10 +1,10 @@
 {
-  "name": "FightErr",
+  "name": "fighterr",
   "version": "0.0.3",
-  "homepage": "https://github.com/NextUserSF/FightErr",
+  "homepage": "https://github.com/NextUserSF/fighterr",
   "authors": [],
   "description": "JavaScript library to ease type checking and variables value validation",
-  "main": "build/FightErr.min.js",
+  "main": "build/fighterr.min.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
