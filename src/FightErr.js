@@ -497,11 +497,13 @@ if ('undefined' === typeof F) {
     // * `Number` Parsed number if parsable, otherwise default value if provided, finally 0 if no default
 
     F.pInt = function (v, def) {
-        if(!isNaN(v)) {
-            return parseInt(v, 10);
+        v = parseInt(v, 10);
+
+        if (isNaN(v)) {
+            return def || 0;
         }
 
-        return def || 0;
+        return v;
     };
 
     // pFloat
