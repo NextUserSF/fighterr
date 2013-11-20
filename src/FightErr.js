@@ -498,12 +498,7 @@ if ('undefined' === typeof F) {
 
     F.pInt = function (v, def) {
         v = parseInt(v, 10);
-
-        if (isNaN(v)) {
-            return def || 0;
-        }
-
-        return v;
+        return isNaN(v) ? def || 0 : v;
     };
 
     // pFloat
@@ -519,12 +514,8 @@ if ('undefined' === typeof F) {
     // * `Number` Parsed number if parsable, otherwise default value if provided, finally 0 if no default
 
     F.pFloat = function (v, def) {
-        if(!isNaN(v)) {
-            v = parseFloat(v);
-            return isNaN(v) ? def || 0 : v;
-        }
-
-        return def || 0;
+        v = parseFloat(v);
+        return isNaN(v) ? def || 0 : v;
     };
 
     // toStr
