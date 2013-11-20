@@ -804,7 +804,7 @@ if ('undefined' === typeof F) {
     F.e = function (name , func, required, given, value) {
         F.warn('Illegal argument type error: Argument ' + name + ' of function [' + func +
             '] should be [' + required + '] but is [' + given + ']. Argument value: ', value);
-        if(window.printStackTrace) {
+        if (window.printStackTrace && DEBUG) {
             F.warn(F.stackTraceCleanup(printStackTrace));
         }
         return new TypeError ('Illegal argument error');
