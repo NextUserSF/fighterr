@@ -11,7 +11,8 @@ module.exports = function (grunt) {
             src: 'src/**/*.js',
             options: {
                 specs: 'spec/**/*.js',
-                helpers: 'helpers/**/*.js'
+                helpers: 'helpers/**/*.js',
+                vendor: 'bower_components/stacktrace/stacktrace.js'
             }
         },
 
