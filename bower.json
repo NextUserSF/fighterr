@@ -1,6 +1,6 @@
 {
   "name": "FightErr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/NextUserSF/FightErr",
   "authors": [],
   "description": "JavaScript library to ease type checking and variables value validation",

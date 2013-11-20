@@ -1,6 +1,6 @@
 {
   "name": "FightErr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "JavaScript library to ease type checking and variables value validation",
   "main": "build/FightErr.min.js",
   "scripts": {
