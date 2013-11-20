@@ -18,7 +18,7 @@
             });
 
             it('should return `False`', function () {
-                expect(F.isFn(1024)).toBe(false);
+                expect(F.isFn({})).toBe(false);
             });
         });
 
