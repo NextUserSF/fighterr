@@ -78,7 +78,7 @@ module.exports = function (grunt) {
             src: '**/*'
         },
 
-        bump: {
+        push: {
             options: {
                 files: ['package.json', 'bower.json'],
                 commitFiles: ['-a']
