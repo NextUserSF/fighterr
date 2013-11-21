@@ -85,6 +85,7 @@
     <span class="keyword">var</span> fnType = <span class="keyword">typeof</span> <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>},
         obj = {},
         chrome = <span class="keyword">typeof</span> window !== <span class="string">'undefined'</span> &amp;&amp; !!window.chrome,
+        printStackTrace = (<span class="keyword">typeof</span> window !== <span class="string">'undefined'</span> &amp;&amp; !!window.printStackTrace) ? window.printStackTrace : <span class="literal">false</span>,
         has_console = !!console;</pre></div></div>
             
         </li>
@@ -3152,8 +3153,8 @@ That means that any value that is not a <code>true</code> boolean returns false.
     F.e = <span class="function"><span class="keyword">function</span> <span class="params">(name , func, required, given, value)</span> {</span>
         F.warn(<span class="string">'Illegal argument type error: Argument '</span> + name + <span class="string">' of function ['</span> + func +
             <span class="string">'] should be ['</span> + required + <span class="string">'] but is ['</span> + given + <span class="string">']. Argument value: '</span>, value);
-        <span class="keyword">if</span> (window.printStackTrace &amp;&amp; DEBUG) {
-            F.warn(F.stackTraceCleanup(printStackTrace));
+        <span class="keyword">if</span> (printStackTrace &amp;&amp; DEBUG) {
+            F.warn(F.stackTraceCleanup(printStackTrace()));
         }
         <span class="keyword">return</span> <span class="keyword">new</span> TypeError (<span class="string">'Illegal argument error'</span>);
     };
