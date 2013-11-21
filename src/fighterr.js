@@ -55,6 +55,7 @@ if ('undefined' === typeof F) {
     var fnType = typeof function () {},
         obj = {},
         chrome = typeof window !== 'undefined' && !!window.chrome,
+        printStackTrace = (typeof window !== 'undefined' && !!window.printStackTrace) ? window.printStackTrace : false,
         has_console = !!console;
 
     // <a name="validation"></a>
@@ -804,8 +805,8 @@ if ('undefined' === typeof F) {
     F.e = function (name , func, required, given, value) {
         F.warn('Illegal argument type error: Argument ' + name + ' of function [' + func +
             '] should be [' + required + '] but is [' + given + ']. Argument value: ', value);
-        if (window.printStackTrace && DEBUG) {
-            F.warn(F.stackTraceCleanup(printStackTrace));
+        if (printStackTrace && DEBUG) {
+            F.warn(F.stackTraceCleanup(printStackTrace()));
         }
         return new TypeError ('Illegal argument error');
     };

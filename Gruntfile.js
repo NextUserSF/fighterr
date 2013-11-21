@@ -8,11 +8,21 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         jasmine: {
-            src: 'src/**/*.js',
             options: {
                 specs: 'spec/**/*.js',
-                helpers: 'helpers/**/*.js',
                 vendor: 'bower_components/stacktrace/stacktrace.js'
+            },
+            source: {
+                src: 'src/<%= pkg.name %>.js',
+                options: {
+                    helpers: 'helpers/**/*.js'
+                }
+            },
+            prod: {
+                src: 'build/<%= pkg.name %>.min.js'
+            },
+            debug: {
+                src: 'build/<%= pkg.name %>.debug.js'
             }
         },
 
@@ -43,7 +53,7 @@ module.exports = function (grunt) {
             },
             debug: {
                 files: {
-                    'build/<%= pkg.name %>.debug.js': 'src/<%= pkg.name %>.js'
+                    'build/<%= pkg.name %>.debug.js': ['bower_components/stacktrace/stacktrace.js', 'src/<%= pkg.name %>.js']
                 },
                 options: {
                     banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %>*/\n',
@@ -96,7 +106,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-gh-pages');
     grunt.loadNpmTasks('grunt-push-release');
 
-    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('test', ['jshint', 'jasmine:source']);
     grunt.registerTask('docs', ['docco', 'copy:docs', 'gh-pages']);
     grunt.registerTask('default', ['test', 'uglify']);
 };
