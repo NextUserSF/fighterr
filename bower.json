@@ -14,7 +14,7 @@
     "tests",
     "spec"
   ],
-  "dependencies": {
+  "devDependencies": {
     "stacktrace": "~0.5.3"
   }
 }
