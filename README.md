@@ -23,7 +23,7 @@ production use.
 The trick is to use [UglifyJS](http://lisperator.net/uglifyjs/) for minifying JavaScript files with properly set
 [Global definitions compressor options](http://lisperator.net/uglifyjs/compress#global-defs).
 
-First of all, wrap all the FightErr call you wish to strip later with `DEBUG` checks:
+First of all, wrap all the FightErr calls you wish to strip later with `DEBUG` checks:
 
 ```javascript
 var myFunction = function (strArg, numArg) {
