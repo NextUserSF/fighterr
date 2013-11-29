@@ -71,8 +71,8 @@
                 expect(F.isStr('hello')).toBe(true);
             });
 
-            it('should return `False`', function () {
-                expect(F.isStr('')).toBe(false);
+            it('should return `True`', function () {
+                expect(F.isStr('')).toBe(true);
             });
 
             it('should return `False`', function () {

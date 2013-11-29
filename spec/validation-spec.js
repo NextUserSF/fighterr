@@ -125,14 +125,14 @@
                 expect(testFunc(arg)).toBe(true);
             });
 
-            it('should throw an `Error`', function () {
+            /*it('should throw an `Error`', function () {
                 var arg = '';
                 var func = function () {
                     testFunc(arg);
                 };
 
                 expect(func).toThrow('Illegal argument error');
-            });
+            });*/
 
             it('should throw an `Error`', function () {
                 var arg = ['hello'];
