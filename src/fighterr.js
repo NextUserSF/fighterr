@@ -301,7 +301,7 @@ if ('undefined' === typeof F) {
     // * `Boolean` True is test succeed, false otherwise
 
     F.isStr = function (v) {
-        return typeof v === 'string' && !!v;
+        return typeof v === 'string';
     };
 
     // isObj
