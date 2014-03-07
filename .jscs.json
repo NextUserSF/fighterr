@@ -10,7 +10,23 @@
     "disallowMixedSpacesAndTabs": true,
     "disallowTrailingWhitespace": true,
     "requireLineFeedAtFileEnd": true,
-    "excludeFiles": ["test/data/**"],
+    "excludeFiles": [
+        "app/assets/js/redactor/**",
+        "node_modules/**",
+        "bower_components/**",
+        "build/**",
+        "lib/**",
+        "doc/**",
+        "tmp/**",
+        "public/**",
+        "views/**",
+        "js-tracker/**",
+        "test/**",
+        "node-redshift/**",
+        "dy-data-model/**",
+        "static/**",
+        "vendor/**"
+    ],
     "requireSpacesInFunctionExpression": {
         "beforeOpeningCurlyBrace": true
     },
