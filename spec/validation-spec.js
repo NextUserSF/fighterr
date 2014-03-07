@@ -81,7 +81,11 @@
             });
 
             it('should throw an `Error`', function () {
-                var arg = {1: true, 2: true, 3: true};
+                var arg = {
+                    1: true,
+                    2: true,
+                    3: true
+                };
                 var func = function () {
                     testFunc(arg);
                 };

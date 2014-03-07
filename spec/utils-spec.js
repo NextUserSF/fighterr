@@ -12,7 +12,9 @@
             });
 
             it('should return default value', function () {
-                expect(F.pInt({number: 1024}, 1000)).toBe(1000);
+                expect(F.pInt({
+                    number: 1024
+                }, 1000)).toBe(1000);
             });
 
             it('should return `0`', function () {
@@ -52,7 +54,9 @@
             });
 
             it('should return `toString()` result', function () {
-                expect(F.toStr(function () { return 'foo'; })).toBe("function () { return 'foo'; }");
+                expect(F.toStr(function () {
+                    return 'foo';
+                })).toBe("function () { return 'foo'; }");
             });
 
             it('should return `toString()` result', function () {
@@ -104,7 +108,9 @@
             });
 
             it('should return `toString()` result', function () {
-                expect(F.toString(function () { return 'foo'; })).toBe("function () { return 'foo'; }");
+                expect(F.toString(function () {
+                    return 'foo';
+                })).toBe("function () { return 'foo'; }");
             });
 
             it('should return `toString()` result', function () {
@@ -217,15 +223,21 @@
             });
 
             it('should throw an `Error`', function () {
-                expect(function () { F.range(0, 'min', 256); }).toThrow();
+                expect(function () {
+                    F.range(0, 'min', 256);
+                }).toThrow();
             });
 
             it('should throw an `Error`', function () {
-                expect(function () { F.range(0, 512, 'max'); }).toThrow();
+                expect(function () {
+                    F.range(0, 512, 'max');
+                }).toThrow();
             });
 
             it('should throw an `Error`', function () {
-                expect(function () { F.range(0, 512, 256); }).toThrow();
+                expect(function () {
+                    F.range(0, 512, 256);
+                }).toThrow();
             });
         });
 
@@ -239,11 +251,15 @@
             });
 
             it('should return 3', function () {
-                expect(F.len({ length: 3 })).toBe(3);
+                expect(F.len({
+                    length: 3
+                })).toBe(3);
             });
 
             it('should return 0', function () {
-                expect(F.len({ size: 3 })).toBe(0);
+                expect(F.len({
+                    size: 3
+                })).toBe(0);
             });
 
             it('should return 0', function () {
@@ -284,27 +300,39 @@
 
         describe('Test a condition', function () {
             it('should not throw an `Error`', function () {
-                expect(function () { F.assert(true); }).not.toThrow();
+                expect(function () {
+                    F.assert(true);
+                }).not.toThrow();
             });
 
             it('should not throw an `Error`', function () {
-                expect(function () { F.assert('hello'); }).not.toThrow();
+                expect(function () {
+                    F.assert('hello');
+                }).not.toThrow();
             });
 
             it('should not throw an `Error`', function () {
-                expect(function () { F.assert(1 + 1); }).not.toThrow();
+                expect(function () {
+                    F.assert(1 + 1);
+                }).not.toThrow();
             });
 
             it('should throw an `Error`', function () {
-                expect(function () { F.assert(false); }).toThrow();
+                expect(function () {
+                    F.assert(false);
+                }).toThrow();
             });
 
             it('should throw an `Error`', function () {
-                expect(function () { F.assert(null); }).toThrow();
+                expect(function () {
+                    F.assert(null);
+                }).toThrow();
             });
 
             it('should throw an `Error`', function () {
-                expect(function () { F.assert(1 - 1); }).toThrow();
+                expect(function () {
+                    F.assert(1 - 1);
+                }).toThrow();
             });
         });
     });

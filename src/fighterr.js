@@ -32,7 +32,7 @@
 
 if ('undefined' === typeof F) {
     /*jshint -W020 */
-    F = FightErr = function(){
+    F = FightErr = function () {
         "use strict";
 
         F.log.apply(F, F.argToArr(arguments));
@@ -52,11 +52,12 @@ if ('undefined' === typeof F) {
 
     "use strict";
 
-    var fnType = typeof function () {},
+    var fnType = typeof
+        function () {},
         obj = {},
-        chrome = typeof window !== 'undefined' && !!window.chrome,
-        printStackTrace = (typeof window !== 'undefined' && !!window.printStackTrace) ? window.printStackTrace : false,
-        has_console = !!console;
+        chrome = typeof window !== 'undefined' && !! window.chrome,
+        printStackTrace = (typeof window !== 'undefined' && !! window.printStackTrace) ? window.printStackTrace : false,
+        has_console = !! console;
 
     // <a name="validation"></a>
     // Validation functions
@@ -203,8 +204,7 @@ if ('undefined' === typeof F) {
 
     F.inst = function (n, v, c, func) {
         if (!F.isInst(v, c)) {
-            throw F.e(n, func, 'instance of ' + F.toStr(v),
-                !!v && !!v.constructor ? v.constructor.name : F.toStr(v), v);
+            throw F.e(n, func, 'instance of ' + F.toStr(v), !! v && !! v.constructor ? v.constructor.name : F.toStr(v), v);
         }
     };
 
@@ -235,8 +235,8 @@ if ('undefined' === typeof F) {
     // * func - `String` Name of the function where the argument type is checked
 
     F.falsy = function (n, v, func) {
-        if (!!v) {
-            throw F.e(n, func, 'falsy', !!F.toBool(v), v);
+        if ( !! v) {
+            throw F.e(n, func, 'falsy', !! F.toBool(v), v);
         }
     };
 
@@ -316,7 +316,7 @@ if ('undefined' === typeof F) {
     // * `Boolean` True is test succeed, false otherwise
 
     F.isObj = function (v) {
-        return typeof v === 'object' && !!v && v.constructor === obj.constructor;
+        return typeof v === 'object' && !! v && v.constructor === obj.constructor;
     };
 
     // isUdef
@@ -469,11 +469,11 @@ if ('undefined' === typeof F) {
 
         l = interfazz.length;
 
-        if(F.isNone(obj)) {
+        if (F.isNone(obj)) {
             return false;
         }
 
-        for (i = 0 ; i < l ; i += 1) {
+        for (i = 0; i < l; i += 1) {
             if (!F.isFn(obj[interfazz[i]])) {
                 return false;
             }
@@ -534,12 +534,12 @@ if ('undefined' === typeof F) {
     // * `String` String representation of value if available, otherwise default value if provided, finally an empty string if no default
 
     F.toStr = function (v, def) {
-        if ( v === null || F.isUdef(v) ) {
+        if (v === null || F.isUdef(v)) {
             return def || '';
         }
 
         if (typeof v.toString === fnType) {
-            return v.toString () || def || '';
+            return v.toString() || def || '';
         }
 
         v = String + v;
@@ -611,7 +611,7 @@ if ('undefined' === typeof F) {
     // * `Number` Resulting value
 
     F.range = function (v, min, max, def) {
-        if ( !F.isNum(v) ) {
+        if (!F.isNum(v)) {
             return F.isNum(def) ? def : 0;
         }
 
@@ -649,7 +649,7 @@ if ('undefined' === typeof F) {
     // * `Number` Length of the array if parameter given is an array, 0 otherwsie
 
     F.len = function (a) {
-        return F.isArr(a) || (!!a && a.hasOwnProperty('length')) ? a.length : 0;
+        return F.isArr(a) || ( !! a && a.hasOwnProperty('length')) ? a.length : 0;
     };
 
     // argToArr
@@ -675,9 +675,9 @@ if ('undefined' === typeof F) {
     // Parameters:
     // * msg - `String` Error message
 
-    F.error = function ( msg ) {
-        if ( DEBUG ) {
-            throw new Error ('[ERROR] ' + msg);
+    F.error = function (msg) {
+        if (DEBUG) {
+            throw new Error('[ERROR] ' + msg);
         }
 
         // TODO: How to manage errors in production
@@ -692,9 +692,9 @@ if ('undefined' === typeof F) {
     // * msg - `mixed` Something to log
 
     F.log = function () {
-        if ( DEBUG && has_console) {
+        if (DEBUG && has_console) {
             var args = F.argToArr(arguments);
-            if(chrome) {
+            if (chrome) {
                 args.unshift('font-weight:bold;color: #55E;');
                 args.unshift('%c[DEBUG]');
             } else {
@@ -722,16 +722,18 @@ if ('undefined' === typeof F) {
     // * msg - `mixed` Something to log
 
     F.warn = function () {
-        if ( DEBUG && has_console) {
+        if (DEBUG && has_console) {
             var args = F.argToArr(arguments);
-            if(chrome) {
+            if (chrome) {
                 args.unshift('font-weight:bold;color: #f3a600;');
                 args.unshift('%c[WARNING]');
             } else {
                 args.unshift('[WARNING]');
             }
-            args.push("\n"+F.stackTraceCleanup(printStackTrace({guess: false}))[0].split(' ')[0]);
-            console.warn.apply(console,args);
+            args.push("\n" + F.stackTraceCleanup(printStackTrace({
+                guess: false
+            }))[0].split(' ')[0]);
+            console.warn.apply(console, args);
         }
     };
 
@@ -746,26 +748,28 @@ if ('undefined' === typeof F) {
     // (Optional, default is to add message stating that there is no replacement)
     // * note - `String` A message to append to deprecated message (Optional)
 
-    F.deprecated = function ( name, replacement, note ) {
-        if ( DEBUG && has_console) {
+    F.deprecated = function (name, replacement, note) {
+        if (DEBUG && has_console) {
             var args = F.argToArr(arguments),
                 msg = '"' + name + '" is deprecated ' +
-                (!!replacement ? 'in favor of "'+ replacement + '"' :
-                    ' without any replacement suggested') + '.\n' + (note ? 'Message: ' + note + '\n': '');
+                    ( !! replacement ? 'in favor of "' + replacement + '"' :
+                    ' without any replacement suggested') + '.\n' + (note ? 'Message: ' + note + '\n' : '');
 
             args.shift();
             args.shift();
 
-            if(chrome) {
+            if (chrome) {
                 args.unshift('font-weight:bold;color: #f3a600;');
                 args.unshift('%c[DEPRECATED]');
             } else {
                 args.unshift('[DEPRECATED]');
             }
             args.unshift(msg);
-            args.push(F.stackTraceCleanup(printStackTrace({guess: false})).join('\n'));
+            args.push(F.stackTraceCleanup(printStackTrace({
+                guess: false
+            })).join('\n'));
 
-            console.warn.apply(console,args);
+            console.warn.apply(console, args);
         }
     };
 
@@ -779,14 +783,14 @@ if ('undefined' === typeof F) {
     // * msg - `mixed` Message to show in error report
     // * doContinue - `Boolean` Avoid raising an error, just log a failure message and continue
 
-    F.assert = function ( condition, msg, doContinue ) {
-        if ( !!condition ) {
+    F.assert = function (condition, msg, doContinue) {
+        if ( !! condition) {
             return;
         }
-        if (!!doContinue && DEBUG) {
-            F.log ('[FAILURE] ' + msg);
+        if ( !! doContinue && DEBUG) {
+            F.log('[FAILURE] ' + msg);
         } else {
-            throw new Error ('[FAILURE] ' + (msg || ''));
+            throw new Error('[FAILURE] ' + (msg || ''));
         }
     };
 
@@ -802,13 +806,13 @@ if ('undefined' === typeof F) {
     // * given - `String` Type given
     // * value - `mixed` Given value
 
-    F.e = function (name , func, required, given, value) {
+    F.e = function (name, func, required, given, value) {
         F.warn('Illegal argument type error: Argument ' + name + ' of function [' + func +
             '] should be [' + required + '] but is [' + given + ']. Argument value: ', value);
         if (printStackTrace && DEBUG) {
             F.warn(F.stackTraceCleanup(printStackTrace()));
         }
-        return new TypeError ('Illegal argument error');
+        return new TypeError('Illegal argument error');
     };
 
     if (DEBUG) {

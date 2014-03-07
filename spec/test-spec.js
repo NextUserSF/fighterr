@@ -4,7 +4,7 @@
     describe('Test functions', function () {
         describe('Check if value is a `Function`', function () {
             it('should return `True`', function () {
-                expect(F.isFn(function(){})).toBe(true);
+                expect(F.isFn(function () {})).toBe(true);
             });
 
             it('should return `True`', function () {
@@ -34,7 +34,11 @@
             });
 
             it('should return `False`', function () {
-                expect(F.isArr({1: true, 2: true, 3: true})).toBe(false);
+                expect(F.isArr({
+                    1: true,
+                    2: true,
+                    3: true
+                })).toBe(false);
             });
 
             it('should return `False`', function () {
@@ -225,7 +229,7 @@
                 var Animal = function (name) {
                     this.name = name;
                 },
-                cat = new Animal('Tom');
+                    cat = new Animal('Tom');
 
                 expect(F.isInst(cat, Animal)).toBe(true);
             });
@@ -238,10 +242,10 @@
                 var Animal = function (name) {
                     this.name = name;
                 },
-                Cat = function (name) {
-                    this.name = name;
-                },
-                tom = new Cat("Tom");
+                    Cat = function (name) {
+                        this.name = name;
+                    },
+                    tom = new Cat("Tom");
 
                 expect(F.isInst(tom, Animal)).toBe(false);
             });
@@ -313,9 +317,15 @@
 
         describe('Check if the supplied value is an object that implements an interface', function () {
             var obj = {
-                method1: function () { return 1; },
-                method2: function () { return 2; },
-                method3: function () { return 3; },
+                method1: function () {
+                    return 1;
+                },
+                method2: function () {
+                    return 2;
+                },
+                method3: function () {
+                    return 3;
+                },
                 property: 'Object property'
             };
 
@@ -365,7 +375,7 @@
 
             it('should throw an error', function () {
                 var iface = 'method1',
-                    func = function() {
+                    func = function () {
                         F.implement(obj, iface);
                     };
                 expect(func).toThrow();
