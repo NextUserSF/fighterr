@@ -1,0 +1,104 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/4.1.2/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@2.14.6
+3 info using node@v4.1.2
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/marin/src/nextuser/fighterr',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/marin/.npm/fighterr/0.0.7/package.tgz not in flight; packing
+9 verbose tar pack [ '/Users/marin/.npm/fighterr/0.0.7/package.tgz',
+9 verbose tar pack   '/Users/marin/src/nextuser/fighterr' ]
+10 verbose tarball /Users/marin/.npm/fighterr/0.0.7/package.tgz
+11 verbose folder /Users/marin/src/nextuser/fighterr
+12 info prepublish fighterr@0.0.7
+13 verbose addLocalTarball adding from inside cache /Users/marin/.npm/fighterr/0.0.7/package.tgz
+14 silly cache afterAdd fighterr@0.0.7
+15 verbose afterAdd /Users/marin/.npm/fighterr/0.0.7/package/package.json not in flight; writing
+16 verbose afterAdd /Users/marin/.npm/fighterr/0.0.7/package/package.json written
+17 silly publish { name: 'fighterr',
+17 silly publish   version: '0.0.7',
+17 silly publish   description: 'JavaScript library to ease type checking and variables value validation',
+17 silly publish   main: 'build/fighterr.min.js',
+17 silly publish   scripts: { test: 'grunt test' },
+17 silly publish   repository: { type: 'git', url: 'git://github.com/NextUserSF/fighterr.git' },
+17 silly publish   author: '',
+17 silly publish   license: 'MIT',
+17 silly publish   bugs: { url: 'https://github.com/NextUserSF/fighterr/issues' },
+17 silly publish   devDependencies:
+17 silly publish    { grunt: '~0.4.1',
+17 silly publish      'grunt-contrib-copy': '~0.4.1',
+17 silly publish      'grunt-contrib-jasmine': '~0.5.2',
+17 silly publish      'grunt-contrib-jshint': '~0.7.1',
+17 silly publish      'grunt-contrib-uglify': '~0.2.7',
+17 silly publish      'grunt-docco3': '~0.2.2',
+17 silly publish      'grunt-gh-pages': '~0.8.1',
+17 silly publish      'grunt-push-release': '~0.1.1',
+17 silly publish      jshint: '*',
+17 silly publish      jscs: '*',
+17 silly publish      'jshint-stylish': '*' },
+17 silly publish   readme: 'FightErr\n========\n\nJavaScript library to ease type checking and variables value validation for both browser and Node.\n\nInstallation and usage\n----------------------\n\nFightErr is available with [`bower`](http://bower.io/):\n\n    bower install fighterr\n\nor via [`npm`](https://npmjs.org/):\n\n    npm install fighterr\n\n### Disabling FightErr in production builds\n\nSometimes the idea of type checking on _production_ is considered useless, while it is very handy during development.\nHere are a few tips on how to strip some (or even all) of the FightErr calls from the JavaScript files intended for\nproduction use.\n\nThe trick is to use [UglifyJS](http://lisperator.net/uglifyjs/) for minifying JavaScript files with properly set\n[Global definitions compressor options](http://lisperator.net/uglifyjs/compress#global-defs).\n\nFirst of all, wrap all the FightErr calls you wish to strip later with `DEBUG` checks:\n\n```javascript\nvar myFunction = function (strArg, numArg) {\n  if (DEBUG) {\n    F.str(\'strArg\', strArg, \'myFunction\');\n    F.num(\'numArg\', numArg, \'myFunction\');\n  }\n  \n  // rest of the code...\n}\n```\n\nThen if you pass:\n```javascript\nglobal_defs: {\n  DEBUG: false\n}\n```\nthe compressor will assume that\'s a constant defintion and will discard code like this as being unreachable.\n\nAdapt the following configuration pieced to your building tools:\n\n#### [Grunt](http://gruntjs.com/):\n\nIt is assumed that [`grunt-contrib-uglify`](https://github.com/gruntjs/grunt-contrib-uglify) plugin is installed\nproperly.\n\n```javascript\n// Project configuration.\ngrunt.initConfig({\n  uglify: {\n    options: {\n      compress: {\n        global_defs: {\n          "DEBUG": false\n        },\n        dead_code: true\n      }\n    },\n    my_target: {\n      files: {\n        \'dest/output.min.js\': [\'src/input.js\']\n      }\n    }\n  }\n});\n```\n\n#### [Brunch](http://brunch.io/):\n\nIt is assumed that [`uglify-js-brunch`](https://github.com/brunch/uglify-js-brunch) plugin is installed properly.\n\n```coffeescript\nconfig =\n  plugins:\n    uglify:\n      mangle: false\n      compress:\n        global_defs: \n          DEBUG: false\n```\n\nDocumentation\n-------------\n\nAnnotated source: http://nextusersf.github.io/fighterr/\n\nLicense\n-------\n\n[MIT](https://raw.github.com/NextUserSF/fighterr/master/LICENSE)\n',
+17 silly publish   readmeFilename: 'README.md',
+17 silly publish   gitHead: '1d91fed59d3d5e06ce48af08f10524bed3a41937',
+17 silly publish   homepage: 'https://github.com/NextUserSF/fighterr#readme',
+17 silly publish   _id: 'fighterr@0.0.7',
+17 silly publish   _shasum: 'b3880dfecf7015e71eb28030f75cdbe8e0379f98',
+17 silly publish   _from: '.' }
+18 verbose getPublishConfig undefined
+19 silly mapToRegistry name fighterr
+20 silly mapToRegistry using default registry
+21 silly mapToRegistry registry https://registry.npmjs.org/
+22 silly mapToRegistry uri https://registry.npmjs.org/fighterr
+23 verbose publish registryBase https://registry.npmjs.org/
+24 silly publish uploading /Users/marin/.npm/fighterr/0.0.7/package.tgz
+25 verbose request uri https://registry.npmjs.org/fighterr
+26 verbose request sending authorization for write operation
+27 info attempt registry request try #1 at 9:52:18 PM
+28 verbose request using bearer token for auth
+29 verbose request id 9a56858ec6652326
+30 http request PUT https://registry.npmjs.org/fighterr
+31 http 403 https://registry.npmjs.org/fighterr
+32 verbose headers { 'content-type': 'application/json',
+32 verbose headers   'cache-control': 'max-age=60',
+32 verbose headers   'content-length': '95',
+32 verbose headers   'accept-ranges': 'bytes',
+32 verbose headers   date: 'Wed, 21 Oct 2015 19:52:19 GMT',
+32 verbose headers   via: '1.1 varnish',
+32 verbose headers   connection: 'keep-alive',
+32 verbose headers   'x-served-by': 'cache-fra1245-FRA',
+32 verbose headers   'x-cache': 'MISS',
+32 verbose headers   'x-cache-hits': '0',
+32 verbose headers   'x-timer': 'S1445457138.751916,VS0,VE1179' }
+33 verbose request invalidating /Users/marin/.npm/registry.npmjs.org/fighterr on PUT
+34 error publish Failed PUT 403
+35 verbose stack Error: "You cannot publish over the previously published version 0.0.7." : fighterr
+35 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+35 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+35 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+35 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:198:22)
+35 verbose stack     at emitTwo (events.js:87:13)
+35 verbose stack     at Request.emit (events.js:172:7)
+35 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1063:14)
+35 verbose stack     at emitOne (events.js:82:20)
+35 verbose stack     at Request.emit (events.js:169:7)
+35 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1009:12)
+36 verbose statusCode 403
+37 verbose pkgid fighterr
+38 verbose cwd /Users/marin/src/nextuser/fighterr
+39 error Darwin 14.4.0
+40 error argv "/usr/local/Cellar/node/4.1.2/bin/node" "/usr/local/bin/npm" "publish"
+41 error node v4.1.2
+42 error npm  v2.14.6
+43 error code E403
+44 error "You cannot publish over the previously published version 0.0.7." : fighterr
+45 error If you need help, you may report this error at:
+45 error     <https://github.com/npm/npm/issues>
+46 verbose exit [ 1, true ]
