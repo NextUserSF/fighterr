@@ -2,7 +2,7 @@
   "name": "fighterr",
   "version": "0.0.4",
   "description": "JavaScript library to ease type checking and variables value validation",
-  "main": "build/FightErr.min.js",
+  "main": "build/fighterr.min.js",
   "scripts": {
     "test": "grunt test"
   },
